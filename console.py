@@ -156,7 +156,9 @@ class HBNBCommand(cmd.Cmd):
         all_inst = storage.all()
         if len(args) < 1:
             list_inst = [str(val) for val in all_inst.values()]
-            print(list_inst)
+            print("[", end="")
+            print(", ".join(list_inst), end="")
+            print("]")
         elif args[0] not in expected_class:
             print("** class doesn't exist **")
             return
@@ -166,7 +168,9 @@ class HBNBCommand(cmd.Cmd):
                     str(v) for k, v in all_inst.items()
                     if key == k.split(".")[0]
                     ]
-            print(match_class)
+            print("[", end="")
+            print(", ".join(match_class), end="")
+            print("]")
 
     def do_update(self, line):
         """update an instance based on the class name
