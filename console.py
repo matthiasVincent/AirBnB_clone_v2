@@ -155,7 +155,7 @@ class HBNBCommand(cmd.Cmd):
         args = line.split()
         all_inst = storage.all()
         if len(args) < 1:
-            list_inst = [val for val in all_inst.values()]
+            list_inst = [str(val) for val in all_inst.values()]
             print(list_inst)
         elif args[0] not in expected_class:
             print("** class doesn't exist **")
@@ -163,7 +163,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             key = args[0]
             match_class = [
-                    v for k, v in all_inst.items()
+                    str(v) for k, v in all_inst.items()
                     if key == k.split(".")[0]
                     ]
             print(match_class)
