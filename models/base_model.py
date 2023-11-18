@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Defines the BaseModel class."""
-from models import storage
+import models
 from uuid import uuid4
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
@@ -36,15 +36,15 @@ class BaseModel:
         if kwargs:
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
-                    value = datetime.fromisoformat(kwargs[key])
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                 if key != "__class__":
                     setattr(self, key, value)
 
     def save(self):
         """Update updated_at with the current datetime."""
         self.updated_at = datetime.utcnow()
-        storage.new(self)
-        storage.save()
+        models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
         """Return a dictionary representation of the BaseModel instance.
@@ -61,11 +61,10 @@ class BaseModel:
 
     def delete(self):
         """Delete the current instance from storage."""
-        storage.delete(self)
+        models.storage.delete(self)
 
     def __str__(self):
         """Return the print/str representation of the BaseModel instance."""
         d = self.__dict__.copy()
         d.pop("_sa_instance_state", None)
         return "[{}] ({}) {}".format(type(self).__name__, self.id, d)
-
