@@ -1,93 +1,104 @@
 #!/usr/bin/python3
-"""This module defines a fileStorage class to store objects in a file"""
+"""
+Contains the FileStorage class
+"""
 
 import json
+import models
+from models.amenity import Amenity
+from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
+from hashlib import md5
+
+classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
 
 
 class FileStorage:
-    """serializes instances to a json file
-    and deserializes a json file into inst
-    ances.
-    __file_path: private class attributes
-    for file path in .json
-    __objects: private class attributes to
-    store dictionary of objects"""
+    """serializes instances to a JSON file & deserializes back to instances"""
+
+    # string - path to the JSON file
     __file_path = "file.json"
+    # dictionary - empty but will store all objects by <class name>.id
     __objects = {}
 
     def all(self, cls=None):
-        """returns the dictionary of objs of cls
-        if None, returns __objects"""
-        from models.base_model import BaseModel
-        from models.state import State
-        from models.user import User
-        from models.city import City
-        from models.place import Place
-        from models.review import Review
-        from models.amenity import Amenity
-
-        dict_of_classes = {
-                "BaseModel": BaseModel, "State": State,
-                "User": User, "City": City,
-                "Place": Place, "Review": Review,
-                "Amenity": Amenity
-                }
+        """returns the dictionary __objects"""
         if cls is not None:
-            objs = {
-                    k: str(v) for k, v in self.__objects.items()
-                    if dict_of_classes[k.split(".")[0]] == cls}
-            return objs
+            new_dict = {}
+            for key, value in self.__objects.items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    new_dict[key] = value
+            return new_dict
         return self.__objects
 
     def new(self, obj):
-        """sets in __objects, the obj with
-        key <obj class name>.id"""
-        class_name = obj.__class__.__name__
-        key = "{}.{}".format(class_name, obj.id)
-        self.__objects[key] = obj
+        """sets in __objects the obj with key <obj class name>.id"""
+        if obj is not None:
+            key = obj.__class__.__name__ + "." + obj.id
+            self.__objects[key] = obj
 
     def save(self):
-        """serializes __objects to a json file"""
+        """serializes __objects to the JSON file (path: __file_path)"""
+        json_objects = {}
+        for key in self.__objects:
+            if key == "password":
+                json_objects[key].decode()
+            json_objects[key] = self.__objects[key].to_dict(save_fs=1)
         with open(self.__file_path, 'w') as f:
-            obj_dicts = {
-                    key: values.to_dict()
-                    for key, values in self.__objects.items()
-                    }
-            json.dump(obj_dicts, f)
-
-    def delete(self, obj=None):
-        """delete obj from __objects if present
-        otherwise do nothing"""
-        if obj is not None:
-            key = "{}.{}".format(obj.__class__.__name__, obj.id)
-            del self.__objects[key]
+            json.dump(json_objects, f)
 
     def reload(self):
-        """deserializes the json file to __objects
-        only if __file_path exists, otherwise
-        do nothing with no exception raised"""
-
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.state import State
-        from models.city import City
-        from models.place import Place
-        from models.review import Review
-        from models.amenity import Amenity
-        dict_of_class = {
-                "BaseModel": BaseModel, "User": User,
-                "State": State, "City": City,
-                "Place": Place, "Review": Review,
-                "Amenity": Amenity
-                }
+        """deserializes the JSON file to __objects"""
         try:
             with open(self.__file_path, 'r') as f:
-                read_values = f.read()
-                loaded_dicts = json.loads(read_values)
-                for indv_dict in loaded_dicts.values():
-                    class_name = indv_dict["__class__"]
-                    del indv_dict["__class__"]
-                    obj = dict_of_class[class_name](**indv_dict)
-                    self.new(obj)
+                jo = json.load(f)
+            for key in jo:
+                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
         except FileNotFoundError:
-            return
+            pass
+
+    def delete(self, obj=None):
+        """delete obj from __objects if it’s inside"""
+        if obj is not None:
+            key = obj.__class__.__name__ + '.' + obj.id
+            if key in self.__objects:
+                del self.__objects[key]
+
+    def close(self):
+        """call reload() method for deserializing the JSON file to objects"""
+        self.reload()
+
+    def get(self, cls, id):
+        """
+        Returns the object based on the class name and its ID, or
+        None if not found
+        """
+        if cls not in classes.values():
+            return None
+
+        all_cls = models.storage.all(cls)
+        for value in all_cls.values():
+            if (value.id == id):
+                return value
+
+        return None
+
+    def count(self, cls=None):
+        """
+        count the number of objects in storage
+        """
+        all_class = classes.values()
+
+        if not cls:
+            count = 0
+            for clas in all_class:
+                count += len(models.storage.all(clas).values())
+        else:
+            count = len(models.storage.all(cls).values())
+
+        return count
