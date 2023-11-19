@@ -57,10 +57,29 @@ class HBNBCommand(cmd.Cmd):
         """don't do anything"""
         return
 
+    def _clean_d(self, g):
+        """takes a dictionary g and returns
+        a formatted dictionary of required
+        data types"""
+        d = {}
+        for k, v in g.items():
+            if '"' in v:
+                v = v.strip('"').replace("_", " ")
+            else:
+                try:
+                    v = eval(v)
+                except ValueError:
+                    continue
+            d[k] = v
+        return d
+
     def do_create(self, line):
         """create command create a new instance of basemodel,
-        saves it to the json file and prints its id
-        line: command line argument"""
+        using the format:
+        create <class name> <param1>
+        <param2>...
+        where param is of the form:
+            <key>=<value>"""
         line_args = line.split()
         if len(line_args) < 1:
             print("** class name missing **")
@@ -68,9 +87,17 @@ class HBNBCommand(cmd.Cmd):
         if line_args[0] not in expected_class:
             print("** class doesn't exist **")
             return
-        obj = expected_class[line_args[0]]()
-        obj.save()
-        print(obj.id)
+        try:
+            passed_args = line_args[1:]
+            list_of_tup = [tuple(i.split("=")) for i in passed_args]
+            # print(list_of_tup)
+            dict_of_args = dict(list_of_tup)
+            formatted_args = self._clean_d(dict_of_args)
+            obj = expected_class[line_args[0]](**formatted_args)
+            obj.save()
+            print(obj.id)
+        except IndexError:
+            pass
 
     def do_show(self, line):
         """print the string representation of an instance
