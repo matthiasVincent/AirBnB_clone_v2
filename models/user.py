@@ -18,8 +18,12 @@ class User(BaseModel, Base):
         password = Column(String(128), nullable=False)
         first_name = Column(String(128), nullable=True)
         last_name = Column(String(128), nullable=True)
-        places = relationship("Place", backref="user")
-        reviews = relationship("Review", backref="user")
+        places = relationship(
+                "Place", backref="user",
+                cascade="all, delete, delete-orphan")
+        reviews = relationship(
+                "Review", backref="user",
+                cascade="all, delete, delete-orphan")
     else:
         email = ""
         password = ""
@@ -29,9 +33,3 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """initializes user"""
         super().__init__(*args, **kwargs)
-
-    def __setattr__(self, name, value):
-        """sets a password with md5 encryption"""
-        if name == "password":
-            value = md5(value.encode()).hexdigest()
-        super().__setattr__(name, value)
