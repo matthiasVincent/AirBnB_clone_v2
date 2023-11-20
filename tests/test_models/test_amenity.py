@@ -78,7 +78,7 @@ class TestAmenity(unittest.TestCase):
         self.assertEqual(datetime, type(us.updated_at))
         self.assertTrue(hasattr(us, "__tablename__"))
         self.assertTrue(hasattr(us, "name"))
-        self.assertTrue(hasattr(us, "place_amenities"))
+        self.assertFalse(hasattr(us, "place_amenities"))
 
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
