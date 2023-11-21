@@ -227,13 +227,14 @@ class TestConsoleClass(unittest.TestCase):
     def test_update_missing_value(self):
         """ Checks if the attribute value is missing """
         with patch('sys.stdout', new=StringIO()) as my_id:
-            HBNBCommand().onecmd('create Atate name="Jos"')
+            HBNBCommand().onecmd('create State name="Jos"')
             base_id = my_id.getvalue()
             self.assertTrue(len(base_id) > 0)
         with patch('sys.stdout', new=StringIO()) as val:
             HBNBCommand().onecmd('update State ' + base_id + "first_name")
             self.assertTrue(val.getvalue() == "** value missing **\n")
 
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "file")
     def test_update_ok(self):
         """ update test working """
         with patch('sys.stdout', new=StringIO()) as val:
@@ -406,6 +407,7 @@ class TestConsoleClass(unittest.TestCase):
             HBNBCommand().onecmd("State.count()")
             self.assertTrue(int(val.getvalue()) >= 1)
 
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "file")
     def test_alternative_destroy(self):
         """test alternative destroy with [class].destroy(id)"""
         with patch('sys.stdout', new=StringIO()) as val:

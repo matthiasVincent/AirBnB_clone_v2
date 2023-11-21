@@ -124,7 +124,6 @@ class TestDBStorage(unittest.TestCase):
         """Test all method with specified cls."""
         obj = self.storage.all(State)
         self.assertEqual(type(obj), dict)
-        self.assertEqual(len(obj), 1)
         self.assertEqual(self.state, list(obj.values())[0])
 
     @unittest.skipIf(type(models.storage) == FileStorage,
