@@ -12,6 +12,7 @@ from models.engine.file_storage import FileStorage
 import os
 
 
+@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "file")
 class TestConsoleClass(unittest.TestCase):
     """TestConsoleClass resume
     Args:

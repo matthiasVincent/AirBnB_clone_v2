@@ -5,6 +5,7 @@ import inspect
 import pep8 as pycodestyle
 import time
 import unittest
+import os
 from unittest import mock
 from models import base_model
 from models.base_model import BaseModel
@@ -56,6 +57,7 @@ class TestBaseModelDocs(unittest.TestCase):
                 )
 
 
+@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "Testing Filestorage")
 class TestBaseModel(unittest.TestCase):
     """Test the BaseModel class"""
     def test_instantiation(self):

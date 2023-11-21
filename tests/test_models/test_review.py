@@ -5,6 +5,7 @@ Contains the TestReviewDocs classes
 
 from datetime import datetime
 import inspect
+import os
 import models
 from models import review
 from models.base_model import BaseModel
@@ -77,6 +78,7 @@ class TestReview(unittest.TestCase):
         review = Review()
         self.assertTrue(hasattr(review, "user_id"))
 
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "file")
     def test_text_attr(self):
         """Test Review has attr text, and it's an empty string"""
         review = Review()
