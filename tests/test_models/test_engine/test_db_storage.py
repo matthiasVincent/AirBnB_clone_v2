@@ -178,6 +178,7 @@ class TestDBStorage(unittest.TestCase):
         """Test reload method."""
         og_session = self.storage._DBStorage__session
         self.storage.reload()
+        self.assertIsInstance(self.storage._DBStorage__session, Session)
         self.assertNotEqual(og_session, self.storage._DBStorage__session)
         self.storage._DBStorage__session.close()
         self.storage._DBStorage__session = og_session
