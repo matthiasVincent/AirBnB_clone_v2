@@ -66,10 +66,16 @@ class HBNBCommand(cmd.Cmd):
             if '"' in v:
                 v = v.strip('"').replace("_", " ")
             else:
-                try:
-                    v = eval(v)
-                except ValueError:
-                    continue
+                if "." in v:
+                    try:
+                        v = float(v)
+                    except ValueError:
+                        continue
+                else:
+                    try:
+                        v = int(v)
+                    except ValueError:
+                        continue
             d[k] = v
         return d
 
