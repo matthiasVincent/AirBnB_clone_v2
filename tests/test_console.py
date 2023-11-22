@@ -93,6 +93,15 @@ class TestConsoleClass(unittest.TestCase):
             HBNBCommand().onecmd("create BaseModel")
             self.assertTrue(len(help_val.getvalue()) > 0)
 
+    def test_create_with_args(self):
+        """Test create on the spot using
+        the format create <class name>
+        <param1> <param2>... where param
+        is <key>=<vale>"""
+        with patch('sys.stdout', new=StringIO()) as val:
+            HBNBCommand().onecmd('create State name="Oyo"')
+            self.assertTrue(len(val.getvalue()) > 0)
+
     def test_create_empty(self):
         """ Test the create function """
         with patch('sys.stdout', new=StringIO()) as help_val:

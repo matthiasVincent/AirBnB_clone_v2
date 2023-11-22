@@ -57,7 +57,7 @@ class TestAmenityDocs(unittest.TestCase):
                             "{:s} method needs a docstring".format(func[0]))
 
 
-"""class TestAmenity(unittest.TestCase):
+class TestAmenity(unittest.TestCase):
     """Test the Amenity class"""
     def test_is_subclass(self):
         """Test that Amenity is a subclass of BaseModel"""
@@ -94,4 +94,4 @@ class TestAmenityDocs(unittest.TestCase):
         """test that the str method has the correct output"""
         amenity = Amenity()
         string = "[Amenity] ({}) {}".format(amenity.id, amenity.__dict__)
-        self.assertEqual(string, str(amenity))"""
+        self.assertEqual(string, str(amenity))
