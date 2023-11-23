@@ -462,5 +462,15 @@ class TestConsoleClass(unittest.TestCase):
             self.assertTrue("John" in val.getvalue())
 
 
+class TestConsoleStorages(unittest.TestCase):
+    """tests objceta creation using both storage engines"""
+    def test_create(self):
+        """test objects creation in the format
+        create <class name> <key>=<value>..."""
+        with patch("sys.stdout", new=StringIO()) as val:
+            HBNBCommand().onecmd('create State name="California"')
+            self.assertTrue(len(val.getvalue()) > 0)
+
+
 if __name__ == '__main__':
     unittest.main()
