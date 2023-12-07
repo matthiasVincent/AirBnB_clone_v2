@@ -2,13 +2,14 @@
 """Test BaseModel for expected behavior and documentation"""
 from datetime import datetime
 import inspect
-import models
 import pep8 as pycodestyle
 import time
 import unittest
+import os
 from unittest import mock
-BaseModel = models.base_model.BaseModel
-module_doc = models.base_model.__doc__
+from models import base_model
+from models.base_model import BaseModel
+module_doc = base_model.__doc__
 
 
 class TestBaseModelDocs(unittest.TestCase):
@@ -56,6 +57,7 @@ class TestBaseModelDocs(unittest.TestCase):
                 )
 
 
+@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "Testing Filestorage")
 class TestBaseModel(unittest.TestCase):
     """Test the BaseModel class"""
     def test_instantiation(self):
@@ -79,6 +81,7 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(inst.number, 89)
 
     def test_datetime_attributes(self):
+<<<<<<< HEAD
         """Test that two BaseModel instances have different datetime objects
         and that upon creation have identical updated_at and created_at
         value."""
@@ -88,6 +91,19 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(inst2.created_at, inst2.updated_at)
         self.assertNotEqual(inst1.created_at, inst2.created_at)
         self.assertNotEqual(inst1.updated_at, inst2.updated_at)
+=======
+        """Test that updated_at was updated when save is called"""
+        inst1 = BaseModel()
+        before_save = inst1.updated_at
+        inst1.save()
+        after_save = inst1.updated_at
+        inst2 = BaseModel()
+        before_save2 = inst2.updated_at
+        inst2.save()
+        after_save2 = inst2.updated_at
+        self.assertNotEqual(before_save, after_save)
+        self.assertNotEqual(before_save2, after_save2)
+>>>>>>> e23e09cfcfe3be133d4b0ee34c201d4ac1fd25f4
 
     def test_uuid(self):
         """Test that id is a valid uuid"""
@@ -106,7 +122,7 @@ class TestBaseModel(unittest.TestCase):
     def test_to_dict(self):
         """Test conversion of object attributes to dictionary for json"""
         my_model = BaseModel()
-        my_model.name = "Holberton"
+        my_model.name = "Alx"
         my_model.my_number = 89
         d = my_model.to_dict()
         expected_attrs = ["id",
@@ -117,19 +133,18 @@ class TestBaseModel(unittest.TestCase):
                           "__class__"]
         self.assertCountEqual(d.keys(), expected_attrs)
         self.assertEqual(d['__class__'], 'BaseModel')
-        self.assertEqual(d['name'], "Holberton")
+        self.assertEqual(d['name'], "Alx")
         self.assertEqual(d['my_number'], 89)
 
     def test_to_dict_values(self):
         """test that values in dict returned from to_dict are correct"""
-        t_format = "%Y-%m-%dT%H:%M:%S.%f"
         bm = BaseModel()
         new_d = bm.to_dict()
         self.assertEqual(new_d["__class__"], "BaseModel")
         self.assertEqual(type(new_d["created_at"]), str)
         self.assertEqual(type(new_d["updated_at"]), str)
-        self.assertEqual(new_d["created_at"], bm.created_at.strftime(t_format))
-        self.assertEqual(new_d["updated_at"], bm.updated_at.strftime(t_format))
+        self.assertEqual(new_d["created_at"], bm.created_at.isoformat())
+        self.assertEqual(new_d["updated_at"], bm.updated_at.isoformat())
 
     def test_str(self):
         """test that the str method has the correct output"""
@@ -139,8 +154,7 @@ class TestBaseModel(unittest.TestCase):
 
     @mock.patch('models.storage')
     def test_save(self, mock_storage):
-        """Test that save method updates `updated_at` and calls
-        `storage.save`"""
+        # Test that save method updates `updated_at` and calls storage.save
         inst = BaseModel()
         old_created_at = inst.created_at
         old_updated_at = inst.updated_at
