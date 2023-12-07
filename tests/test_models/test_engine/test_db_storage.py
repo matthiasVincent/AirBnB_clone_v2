@@ -70,12 +70,12 @@ test_db_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") != db, "not db")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") != "db", "not db")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
