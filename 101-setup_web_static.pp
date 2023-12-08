@@ -59,8 +59,9 @@ file { '/data/web_static/current':
   target => '/data/web_static/releases/test'
 }
 
-exec { 'chown -R ubuntu:ubuntu /data/':
-  path => '/usr/bin/:/usr/local/bin/:/bin/'
+exec { 'perm':
+  command => 'chown -R ubuntu /data && chgrp -R ubuntu /data',
+  path    => '/usr/bin/:/usr/local/bin/:/bin/'
 }
 
 file { '/var/www':
@@ -88,5 +89,6 @@ file { '/etc/nginx/sites-available/default':
 
 exec { 'nginx restart':
   command => 'service nginx restart',
+  path    => '/usr/bin:/usr/local/bin:/usr/sbin',
   require => Package['nginx']
 }
