@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, intial-scale=1.0">
+    <title>alx-school</title>
+    <link rel="stylesheet" href="static/styles/4-common.css">
+    <link rel="stylesheet" href="static/styles/3-header.css">
+    <link rel="stylesheet" href="static/styles/3-footer.css">
+    <link rel="stylesheet" href="static/styles/8-places.css">
+    <link rel="stylesheet" href="static/styles/6-filters.css">
+    <link rel="icon" href="static/images/logo.png">
+</head>
+<body>
+    <!-- HEADER SECTION -->
+    <HEADER>
+        <DIV class="logo"></DIV>
+    </HEADER>
+    <DIV class="container">
+        <SECTION class="filters">
+            <DIV class="locations">
+                <DIV class="loc">
+                    <H3>States</H3>
+                    <H4>&nbsp;</H4>
+                </DIV>
+                <UL class="popover">
+                    {% for state in all_state|sort(attribute="name") %}
+                    <LI>
+                        <H2>{{state.name}}</H2>
+                        <UL>
+                            {% for city in state.cities|sort(attribute="name") %}
+                            <LI>{{city.name}}</LI>
+                            {% endfor %}
+                        </UL>
+                    </LI>
+                    {% endfor %}
+                </UL>
+            </DIV>
+            <DIV class="amenities">
+                <DIV class="loc">
+                    <H3>Amenities</H3>
+                    <H4>&nbsp;</H4>
+                </DIV>
+                 <UL class="popover">
+                    {% for amenity in all_amenity|sort(attribute="name") %}
+                    <LI>{{amenity.name}}</LI>
+                    {% endfor %}
+                 </UL>
+            </DIV>
+            <BUTTON>Search</BUTTON>
+        </SECTION>
+        
+        <!-- PLACE SECTION -->
+        
+        <section class="places">
+            <h1>Places</h1>
+            <div class="art-cont">
+            {% for place in all_place %}
+            <article>
+                <h2>{{place.name}}</h2>
+                <div class="price_by_night">
+                    <p>${{place.price_by_night}}</p>
+                </div>
+                <div class="information">
+                    <div class="max_guest">
+                        <img src="static/images/icon_group.png" alt="">
+                        <p>{{place.max_guest}} guests</p>
+                    </div>
+                    <div class="number_rooms">
+                        <img src="static/images/icon_bed.png" alt="">
+                        <p>{{place.number_rooms}} beds</p>
+                    </div>
+                    <div class="number_bathrooms">
+                        <img src="static/images/icon_bath.png" alt="">
+                        <p>{{place.number_bathrooms}} bathrooms</p>
+                    </div>
+                </div>
+                <div class="user">
+                    <p><b>Owner:</b> {{place.user.first_name}}, {{place.user.last_name}}</p>
+                </div>
+                <div class="description">
+                    <p>
+                    {{place.description |safe}}
+                    </p>
+                </div>
+            </article>
+            {% endfor %}
+            </div>
+        </section>
+    </DIV>
+    <FOOTER>
+        <P>Best School</P>
+    </FOOTER>
+    
+</BODY>
+</HTML>

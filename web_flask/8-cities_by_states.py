@@ -1,38 +1,31 @@
 #!/usr/bin/python3
+"""Starts a Flask web application.
 
+The application listens on 0.0.0.0, port 5000.
+Routes:
+    /cities_by_states: HTML page with a list of all states and related cities.
 """
-Script start a flask web application with
-requirements:
-    Listen on 0.0.0.0 port 5000,
-    Use storage to fetch data from engines(FileStorage or DBStorage)
-    Remove current session after each request using @app.teardown_appcontext
-    on a given method
-    Routes:
-        /cities_by_states: display a HTML page with state and city information
-    required to use the option, strict_slashes=False
-"""
-
-from flask import Flask
 from models import storage
+from flask import Flask
 from flask import render_template
 
-app = Flask(__file__, template_folder="web_flask/templates")
-
-
-@app.teardown_appcontext
-def teardown(exc):
-    """remove the current sqlalchemy session"""
-    storage.close()
+app = Flask(__name__)
 
 
 @app.route("/cities_by_states", strict_slashes=False)
 def cities_by_states():
-    """display state_list alphabetically in a HTML page"""
-    all_state_dict = storage.all("State")
-    all_state = [values for values in all_state_dict.values()]
+    """Displays an HTML page with a list of all states and related cities.
 
-    # print(all_state)
-    return render_template("8-cities_by_states.html", all_state=all_state)
+    States/cities are sorted by name.
+    """
+    states = storage.all("State")
+    return render_template("8-cities_by_states.html", states=states)
+
+
+@app.teardown_appcontext
+def teardown(exc):
+    """Remove the current SQLAlchemy session."""
+    storage.close()
 
 
 if __name__ == "__main__":
