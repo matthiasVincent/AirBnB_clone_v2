@@ -1,2 +1,7 @@
-insert into states values( "Alabama", "421a55f1-7d82-45d9-b54c-a76916479545", "2017-03-25 19:42:40",  "2017-03-25 19:42:40");
-select * from states;
+-- prepares a MySQL server for the project
+
+CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
+CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
+GRANT ALL PRIVILEGES ON `hbnb_dev_db`.* TO 'hbnb_dev'@'localhost';
+GRANT SELECT ON `performance_schema`.* TO 'hbnb_dev'@'localhost';
+FLUSH PRIVILEGES;
